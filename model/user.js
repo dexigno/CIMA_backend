@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const { constants } = require('../constants');
-const bcryt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema(
   {
@@ -52,6 +52,11 @@ const userSchema = new mongoose.Schema(
       default: false,
       select: false,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      select: false,
+    },
     phone: String,
     speciality: String,
     businessName: String,
@@ -71,6 +76,20 @@ userSchema.statics.registerUser = async function (payload) {
   if (createdUser) return createdUser;
 };
 
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+  this.confirmPassword = undefined;
+  next();
+});
+
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
 userSchema.methods.createVerificationOTP = function () {
   const verificationOTP = Math.floor(Math.random() * Math.pow(10, 6));
   this.verificationOtp = verificationOTP;
@@ -79,15 +98,26 @@ userSchema.methods.createVerificationOTP = function () {
   return verificationOTP;
 };
 
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcryt.hash(this.password, 12);
-  this.confirmPassword = undefined;
-  next();
-});
-
 userSchema.methods.isCorrectPassword = async function (userPassword, hashedPassword) {
-  return await bcryt.compare(userPassword, hashedPassword);
+  return await bcrypt.compare(userPassword, hashedPassword);
+};
+
+userSchema.methods.createResetPasswordOTP = function () {
+  const resetOTP = Math.floor(1000 + Math.random() * 9000);
+
+  this.passwordResetOtp = resetOTP;
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetOTP;
+};
+
+// METHODS FOR CHECKING PASSWORD CHANGE AFTER token ISSUED
+userSchema.methods.PasswordChangedAfter = function (jwtIssuedTime) {
+  if (this.passwordChangedAt) {
+    const _passwordChangedAt = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    return jwtIssuedTime < _passwordChangedAt;
+  }
+  return false;
 };
 
 module.exports = mongoose.model('User', userSchema);

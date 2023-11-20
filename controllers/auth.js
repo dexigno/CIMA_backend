@@ -78,6 +78,13 @@ exports.verifyOtp = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new ErrorHandler('Invalid OTP . Please Check Again'));
   }
+
+  let token;
+
+  if (user) {
+    token = generateToken(user._id);
+  }
+
   if (user.verificationOtpExpires && user.verificationOtpExpires < Date.now()) {
     return next(new ErrorHandler('Verification code has expired. Please request a new one.'));
   }
@@ -90,6 +97,7 @@ exports.verifyOtp = catchAsync(async (req, res, next) => {
   return res.status(200).json({
     status: 'success',
     message: 'Otp verified! .',
+    token,
   });
 });
 
