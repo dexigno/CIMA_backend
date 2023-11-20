@@ -1,30 +1,52 @@
 const User = require('../model/user');
-const ErrorHandler = require('../utils/ErrorHandler');
+
 const catchAsync = require('../utils/catchAsync');
+const ErrorHandler = require('../utils/ErrorHandler');
+
+const { sendVerificationEmail } = require('../services/email');
 const { generateToken } = require('../utils/generateToken');
 
 exports.signup = catchAsync(async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
   if (!name || !email || !password || !confirmPassword) {
-    return next(new ErrorHandler('Mandotory Fields Missing.'));
+    return next(new ErrorHandler('Mandatory Fields Missing.'));
   }
+
   const user = await User.findOne({ email: req.body.email });
   if (user) {
-    return next(new ErrorHandler('User already Exist.'));
+    return next(new ErrorHandler('User already exists.'));
   }
 
   const newUser = await User.registerUser({
     ...req.body,
   });
-  let token;
+
   if (newUser) {
-    token = generateToken(newUser._id);
+    const verificationOTP = await newUser.createVerificationOTP();
+
+    await newUser.save({ validateBeforeSave: false });
+    try {
+      const options = {
+        userEmail: newUser.email,
+        subject: 'Cima Systems | OTP Verification',
+        message: `Here is your 6 verification digit OTP: ${verificationOTP}.
+Use this  OTP Verification of your CIMA Account.Please verify your account before 60 mins`,
+      };
+
+      await sendVerificationEmail(options);
+
+      return res.status(201).json({
+        status: 'success',
+        message: 'User Registered Successfully. Please check your mail for verification OTP',
+      });
+    } catch (error) {
+      newUser.verificationOTP = undefined;
+      newUser.verificationOtpExpires = undefined;
+      await newUser.save({ validateBeforeSave: false });
+      console.log('Email_sending_error', error.message);
+      return next(new ErrorHandler('Error while sending email! Please try again later.', 400));
+    }
   }
-  return res.status(201).json({
-    status: 'success',
-    message: 'User Registered Successfully.',
-    token,
-  });
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -45,5 +67,28 @@ exports.login = catchAsync(async (req, res, next) => {
     status: 'success',
     message: 'Sucessfully Logged In',
     token,
+  });
+});
+
+exports.verifyOtp = catchAsync(async (req, res, next) => {
+  const user = await User.findOne({
+    verificationOtp: req.params.otp,
+  });
+
+  if (!user) {
+    return next(new ErrorHandler('Invalid OTP . Please Check Again'));
+  }
+  if (user.verificationOtpExpires && user.verificationOtpExpires < Date.now()) {
+    return next(new ErrorHandler('Verification code has expired. Please request a new one.'));
+  }
+
+  user.verificationOtp = undefined;
+  user.verificationOtpExpires = undefined;
+  user.verified = true;
+  await user.save({ validateBeforeSave: false });
+
+  return res.status(200).json({
+    status: 'success',
+    message: 'Otp verified! .',
   });
 });

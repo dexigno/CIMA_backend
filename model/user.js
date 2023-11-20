@@ -60,6 +60,8 @@ const userSchema = new mongoose.Schema(
     state: String,
     city: String,
     zip: Number,
+    verificationOtp: Number,
+    verificationOtpExpires: Number,
   },
   { timestamps: true },
 );
@@ -67,6 +69,14 @@ const userSchema = new mongoose.Schema(
 userSchema.statics.registerUser = async function (payload) {
   const createdUser = await this.create(payload);
   if (createdUser) return createdUser;
+};
+
+userSchema.methods.createVerificationOTP = function () {
+  const verificationOTP = Math.floor(Math.random() * Math.pow(10, 6));
+  this.verificationOtp = verificationOTP;
+  this.verificationOtpExpires = Date.now() + 60 * 60 * 1000;
+
+  return verificationOTP;
 };
 
 userSchema.pre('save', async function (next) {
