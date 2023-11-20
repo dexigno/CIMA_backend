@@ -55,10 +55,16 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!email || !password) {
     return next(new ErrorHandler('Please enter email or password', 400));
   }
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select('+password +verified');
+
+  console.log(user);
 
   if (!user || !(await user.isCorrectPassword(password, user.password))) {
     return next(new ErrorHandler('Incorrect email or password.', 400));
+  }
+
+  if (!user.verified) {
+    return next(new ErrorHandler('User Not Verified', 400));
   }
 
   const token = generateToken(user._id);

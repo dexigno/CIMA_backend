@@ -17,8 +17,6 @@ exports.authProtect = catchAsync(async (req, res, next) => {
 
   const verifiedUser = await User.findOne({
     _id: decoded.id,
-    // isDeleted: { $ne: true },
-    verified: { $ne: false },
   });
   if (!verifiedUser) {
     return next(new ErrorHandler('User no longer available. Please login again'));
