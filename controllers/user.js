@@ -4,7 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 
 exports.getMe = catchAsync(async (req, res, next) => {
   const user = req.user;
-  console.log(user);
+  // console.log(user);
 
   if (!user) {
     return next(
