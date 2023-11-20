@@ -92,3 +92,36 @@ exports.verifyOtp = catchAsync(async (req, res, next) => {
     message: 'Otp verified! .',
   });
 });
+
+exports.resendOtp = catchAsync(async (req, res, next) => {
+  const user = await User.findOne({
+    email: req.body.email,
+  });
+  if (!user) {
+    return next(new ErrorHandler('User Not found'));
+  }
+
+  const verificationOTP = await user.createVerificationOTP();
+
+  await user.save({ validateBeforeSave: false });
+  try {
+    const options = {
+      userEmail: user.email,
+      subject: 'Cima Systems | OTP Verification',
+      message: `Here is your 6 verification digit OTP: ${verificationOTP}.
+Use this  OTP Verification of your CIMA Account.Please verify your account before 60 mins`,
+    };
+
+    await sendVerificationEmail(options);
+    return res.status(201).json({
+      status: 'success',
+      message: 'Please check your mail for verification OTP',
+    });
+  } catch (error) {
+    user.verificationOTP = undefined;
+    user.verificationOtpExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    console.log('Email_sending_error', error.message);
+    return next(new ErrorHandler('Error while sending email! Please try again later.', 400));
+  }
+});
