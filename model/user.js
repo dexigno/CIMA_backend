@@ -66,7 +66,10 @@ const userSchema = new mongoose.Schema(
     city: String,
     zip: Number,
     verificationOtp: Number,
-    verificationOtpExpires: Number,
+    verificationOtpExpires: String,
+    passwordResetOtp: Number,
+    passwordResetOtpExpires: String,
+    passwordResetToken: String,
   },
   { timestamps: true },
 );
@@ -103,10 +106,10 @@ userSchema.methods.isCorrectPassword = async function (userPassword, hashedPassw
 };
 
 userSchema.methods.createResetPasswordOTP = function () {
-  const resetOTP = Math.floor(1000 + Math.random() * 9000);
+  const resetOTP = Math.floor(Math.random() * Math.pow(10, 6));
 
   this.passwordResetOtp = resetOTP;
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  this.passwordResetOtpExpires = Date.now() + 10 * 60 * 1000;
 
   return resetOTP;
 };

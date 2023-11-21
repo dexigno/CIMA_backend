@@ -1,6 +1,7 @@
 const { appConfig } = require('../config');
 const nodemailer = require('nodemailer');
-exports.sendVerificationEmail = async (mailOptions) => {
+
+exports.sendEmail = async (mailOptions) => {
   // create reusable transporter object using the default SMTP transport
   const transporter = await nodemailer.createTransport({
     service: 'gmail',
