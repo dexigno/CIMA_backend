@@ -15,7 +15,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   const user = await User.findOne({ email: req.body.email });
   if (user) {
-    return next(new ErrorHandler('User already exists.', 400));
+    return next(new ErrorHandler('User already exists.'));
   }
 
   const newUser = await User.registerUser({
@@ -111,7 +111,7 @@ exports.resendOtp = catchAsync(async (req, res, next) => {
     email: req.body.email,
   });
   if (!user) {
-    return next(new ErrorHandler('User Not found', 400));
+    return next(new ErrorHandler('User Not found'));
   }
 
   const _verificationOTP = await user.createVerificationOTP();
