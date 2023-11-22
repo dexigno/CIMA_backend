@@ -10,12 +10,12 @@ const { generateUniqueToken } = require('../utils/Token');
 exports.signup = catchAsync(async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
   if (!name || !email || !password || !confirmPassword) {
-    return next(new ErrorHandler('Mandatory Fields Missing.'));
+    return next(new ErrorHandler('Mandatory Fields Missing.', 400));
   }
 
   const user = await User.findOne({ email: req.body.email });
   if (user) {
-    return next(new ErrorHandler('User already exists.'));
+    return next(new ErrorHandler('User already exists.', 400));
   }
 
   const newUser = await User.registerUser({
@@ -81,7 +81,7 @@ exports.verifyOtp = catchAsync(async (req, res, next) => {
   });
 
   if (!user) {
-    return next(new ErrorHandler('Invalid OTP . Please Check Again'));
+    return next(new ErrorHandler('Invalid OTP . Please Check Again', 400));
   }
 
   let token;
@@ -91,7 +91,7 @@ exports.verifyOtp = catchAsync(async (req, res, next) => {
   }
 
   if (user.verificationOtpExpires && user.verificationOtpExpires < Date.now()) {
-    return next(new ErrorHandler('Verification code has expired. Please request a new one.'));
+    return next(new ErrorHandler('Verification code has expired. Please request a new one.', 400));
   }
 
   user.verificationOtp = undefined;
@@ -111,7 +111,7 @@ exports.resendOtp = catchAsync(async (req, res, next) => {
     email: req.body.email,
   });
   if (!user) {
-    return next(new ErrorHandler('User Not found'));
+    return next(new ErrorHandler('User Not found', 400));
   }
 
   const _verificationOTP = await user.createVerificationOTP();
@@ -179,7 +179,7 @@ exports.VerifyForgetPasswordOtp = catchAsync(async (req, res, next) => {
     passwordResetOtpExpires: { $gt: Date.now() },
   });
   if (!user) {
-    return next(new ErrorHandler('Invalid OTP or has been expired.'));
+    return next(new ErrorHandler('Invalid OTP or has been expired.', 400));
   }
 
   const token = generateUniqueToken();
@@ -199,7 +199,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   const { password, confirmPassword } = req.body;
   const { token } = req.params;
   if (!password || !confirmPassword) {
-    return next(new ErrorHandler('Passwords are required'));
+    return next(new ErrorHandler('Passwords are required', 400));
   }
 
   //  check if the otp is valid or expires
@@ -209,11 +209,11 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   });
 
   if (!user) {
-    return next(new ErrorHandler('Invalid Token.'));
+    return next(new ErrorHandler('Invalid Token.', 400));
   }
 
   if (user.passwordResetOtpExpires < Date.now()) {
-    return next(new ErrorHandler('Otp expired.'));
+    return next(new ErrorHandler('Otp expired.', 400));
   }
 
   user.password = password;
