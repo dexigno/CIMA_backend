@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-const { constants } = require('../constants');
+const { RUNNING_ENVIRONMENTS } = require('../constants');
 const { appConfig } = require('../config');
 
 const DB_URI =
-  appConfig.NODE_ENV === constants.RUNNING_ENVIRONMENTS.PRODUCTION
+  appConfig.NODE_ENV === RUNNING_ENVIRONMENTS.PRODUCTION
     ? appConfig.MONGO_URI
     : appConfig.LOCAL_MONGO_URI;
 

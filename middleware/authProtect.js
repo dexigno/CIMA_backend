@@ -1,3 +1,4 @@
+const { appConfig } = require('../config');
 const User = require('../model/user');
 const catchAsync = require('../utils/catchAsync');
 const ErrorHandler = require('../utils/ErrorHandler');
@@ -13,7 +14,7 @@ exports.authProtect = catchAsync(async (req, res, next) => {
     return next(new ErrorHandler('Please login to get access.', 401));
   }
 
-  const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+  const decoded = await jwt.verify(token, appConfig.JWT_SECRET);
 
   const verifiedUser = await User.findOne({
     _id: decoded.id,

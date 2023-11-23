@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-const { constants } = require('../constants');
+const { ROLES, GENDERS } = require('../constants');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema(
@@ -34,18 +34,13 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: [constants.GENDERS.MALE, constants.GENDERS.FEMALE],
+      enum: [GENDERS.MALE, GENDERS.FEMALE],
     },
     role: {
       type: String,
       required: [true, 'User Role is missing'],
-      default: constants.ROLES.DOCTOR,
-      enum: [
-        constants.ROLES.DOCTOR,
-        constants.ROLES.PATIENT,
-        constants.ROLES.ADMIN,
-        constants.ROLES.MANAGER,
-      ],
+      default: ROLES.DOCTOR,
+      enum: [ROLES.DOCTOR, ROLES.PATIENT, ROLES.ADMIN, ROLES.MANAGER],
     },
     verified: {
       type: Boolean,
