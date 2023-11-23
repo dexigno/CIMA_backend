@@ -13,4 +13,9 @@ exports.constants = {
     ADMIN: 'admin',
     MANAGER: 'manager',
   },
+  S3BUCKET_FOLDERS: {
+    ID_PICTURES: 'id-pictures',
+  },
 };
+
+RUNNING_ENVIRONMENTS = { DEVELOPMENT: 'development', PRODUCTION: 'production' };

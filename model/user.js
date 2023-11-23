@@ -57,6 +57,11 @@ const userSchema = new mongoose.Schema(
       default: false,
       select: false,
     },
+    image: String,
+    imageKey: {
+      type: String,
+      select: false,
+    },
     phone: String,
     speciality: String,
     businessName: String,

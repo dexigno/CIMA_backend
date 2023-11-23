@@ -202,10 +202,10 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     return next(new ErrorHandler('Passwords are required', 400));
   }
 
-  //  check if the otp is valid or expires
+  console.log(Date.now());
+
   const user = await User.findOne({
     passwordResetToken: token,
-    // passwordResetExpires: { $gt: Date.now() },
   });
 
   if (!user) {

@@ -9,4 +9,9 @@ exports.appConfig = {
   EMAIL_PORT: process.env.EMAIL_PORT,
   EMAIL_USERNAME: process.env.EMAIL_USERNAME,
   EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
+  AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+  AWS_BUCKET_REGION: process.env.AWS_BUCKET_REGION,
+  AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
+  AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+  AWS_BASE_URL: process.env.AWS_BASE_URL,
 };
