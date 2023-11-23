@@ -202,8 +202,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     return next(new ErrorHandler('Passwords are required', 400));
   }
 
-  console.log(Date.now());
-
   const user = await User.findOne({
     passwordResetToken: token,
   });
