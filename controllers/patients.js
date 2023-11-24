@@ -26,7 +26,6 @@ exports.createPatient = catchAsync(async (req, res, next) => {
     });
   }
 });
-
 exports.getPatients = Factory.getAllByDoctor(User);
 
 exports.sendCredentials = catchAsync(async (req, res, next) => {
@@ -41,7 +40,7 @@ exports.sendCredentials = catchAsync(async (req, res, next) => {
     const options = {
       userEmail: user.email,
       subject: 'Cima Systems | Patient Credentials',
-      message: `Here is User Credentials.
+      message: `Here are your login Credentials for CIMA System.
 Email: ${email}
 Password: ${user.encryptedPassword}
 `,
