@@ -5,7 +5,14 @@ const sendEmail = async () => {
     const mailOptions = {
       userEmail: `amoizj16@gmail.com`,
       subject: 'Cima Systems | Customer Support - Beta Version',
-      message: `Please reset your password before proceeding with Login.`,
+      message: `Dear User of Cima System, 
+      
+Just to inform you that please reset your password before proceeding with the Login of you account after an hour. 
+The application is in the Process of upgrading.
+
+Thanks
+Team Cima
+`,
     };
 
     const transporter = await nodemailer.createTransport({

@@ -30,7 +30,7 @@ exports.createPatient = catchAsync(async (req, res, next) => {
 exports.getPatients = Factory.getAllByDoctor(User);
 exports.getPatient = Factory.getOne(User);
 exports.updatePatient = Factory.updateOne(User);
-exports.deletePatient = Factory.softDelete(User);
+exports.deletePatient = Factory.deleteOne(User);
 
 exports.sendCredentials = catchAsync(async (req, res, next) => {
   const { email } = req.body;
