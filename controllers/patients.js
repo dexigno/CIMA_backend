@@ -4,14 +4,11 @@ const catchAsync = require('../utils/catchAsync');
 const ErrorHandler = require('../utils/ErrorHandler');
 const Factory = require('./Factory');
 
-// const { sendEmail } = require('../services/email');
-// const { generateJWT } = require('../utils/generateJWT');
-// const { generateUniqueToken } = require('../utils/Token');
+const { sendEmail } = require('../services/email');
 
 exports.createPatient = catchAsync(async (req, res, next) => {
-  const { name, email, phone, gender, weight, activityLevel } = req.body;
+  const { email } = req.body;
 
-  // const doctor = req.user._id;
   const user = await User.findOne({ email });
   if (user) {
     return next(new ErrorHandler('Email already in use.'));
@@ -35,16 +32,30 @@ exports.getPatients = Factory.getAllByDoctor(User);
 exports.sendCredentials = catchAsync(async (req, res, next) => {
   const { email } = req.body;
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select('+encryptedPassword');
   if (!user) {
     return next(new ErrorHandler('No user Found with this email.'));
   }
 
-  console.log(user);
+  try {
+    const options = {
+      userEmail: user.email,
+      subject: 'Cima Systems | Patient Credentials',
+      message: `Here is User Credentials.
+Email: ${email}
+Password: ${user.encryptedPassword}
+`,
+    };
 
-  return res.status(201).json({
-    status: 'success',
-    message: 'Patient Created Successfully.',
-    // data: newPatient,
-  });
+    await sendEmail(options);
+
+    return res.status(201).json({
+      status: 'success',
+      message: 'Credentials Sent to Patient',
+    });
+  } catch (error) {
+    await newUser.save({ validateBeforeSave: false });
+    console.log('Email_sending_error', error.message);
+    return next(new ErrorHandler('Error while sending email! Please try again later.', 400));
+  }
 });
