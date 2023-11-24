@@ -106,7 +106,7 @@ userSchema.statics.createPatient = async function (payload) {
     confirmPassword: password,
     role: ROLES.PATIENT,
     encryptedPassword,
-    verfied: true,
+    verified: true,
   });
   if (createdPatient) return createdPatient;
 };
