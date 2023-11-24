@@ -14,7 +14,7 @@ exports.authProtect = catchAsync(async (req, res, next) => {
     return next(new ErrorHandler('Please login to get access.', 401));
   }
 
-  const decoded = await jwt.verify(token, appConfig.JWT_SECRET);
+  const decoded = jwt.verify(token, appConfig.JWT_SECRET);
 
   const verifiedUser = await User.findOne({
     _id: decoded.id,
