@@ -1,3 +1,4 @@
+const { UPDATE_RESTRICTED_KEYS } = require('../constants');
 const User = require('../model/user');
 const ErrorHandler = require('../utils/ErrorHandler');
 const catchAsync = require('../utils/catchAsync');
@@ -51,20 +52,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     );
   }
 
-  const restrictedKeys = [
-    'verified',
-    'isDeleted',
-    'role',
-    'image',
-    'imageKey',
-    'email',
-    'password',
-    'verificationOtp',
-    'verificationOtpExpires',
-    'passwordResetOtp',
-    'passwordResetOtpExpires',
-    'passwordResetToken',
-  ];
+  const restrictedKeys = UPDATE_RESTRICTED_KEYS;
 
   restrictedKeys.forEach((field) => {
     if (req.body.hasOwnProperty(field)) {

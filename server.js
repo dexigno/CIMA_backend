@@ -12,13 +12,13 @@ dotenv.config({ path: './config.env' });
 
 const app = require('./app');
 const { appConfig } = require('./config');
-const { constants } = require('./constants');
+const { RUNNING_ENVIRONMENTS } = require('./constants');
 
 const server = http.createServer(app);
 
 const runningEnvironment = appConfig.NODE_ENV;
 
-if (runningEnvironment === constants.RUNNING_ENVIRONMENTS.DEVELOPMENT) {
+if (runningEnvironment === RUNNING_ENVIRONMENTS.DEVELOPMENT) {
   app.use(logger('dev'));
 }
 

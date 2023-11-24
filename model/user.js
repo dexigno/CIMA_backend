@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-const { constants } = require('../constants');
+const { ROLES, GENDERS } = require('../constants');
 const bcrypt = require('bcrypt');
+const { generateRandomString, encrypt } = require('../utils/helpers');
 
 const userSchema = new mongoose.Schema(
   {
@@ -34,18 +35,13 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: [constants.GENDERS.MALE, constants.GENDERS.FEMALE],
+      enum: [GENDERS.MALE, GENDERS.FEMALE],
     },
     role: {
       type: String,
       required: [true, 'User Role is missing'],
-      default: constants.ROLES.DOCTOR,
-      enum: [
-        constants.ROLES.DOCTOR,
-        constants.ROLES.PATIENT,
-        constants.ROLES.ADMIN,
-        constants.ROLES.MANAGER,
-      ],
+      default: ROLES.DOCTOR,
+      enum: [ROLES.DOCTOR, ROLES.PATIENT, ROLES.ADMIN, ROLES.MANAGER],
     },
     verified: {
       type: Boolean,
@@ -62,10 +58,20 @@ const userSchema = new mongoose.Schema(
       type: String,
       select: false,
     },
+    encryptedPassword: {
+      type: String,
+      select: false,
+    },
+    doctor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
     phone: String,
     speciality: String,
     businessName: String,
     estimatedPatients: String,
+    weight: Number,
+    activityLevel: String,
     street: String,
     state: String,
     city: String,
@@ -82,6 +88,27 @@ const userSchema = new mongoose.Schema(
 userSchema.statics.registerUser = async function (payload) {
   const createdUser = await this.create(payload);
   if (createdUser) return createdUser;
+};
+
+userSchema.statics.createPatient = async function (payload) {
+  const password = generateRandomString(6);
+  const encryptedPassword = encrypt(password);
+  if (!payload.name) {
+    throw Error('The name is required');
+  }
+  if (!payload.email) {
+    throw Error('Email is required');
+  }
+
+  const createdPatient = await this.create({
+    ...payload,
+    password,
+    confirmPassword: password,
+    role: ROLES.PATIENT,
+    encryptedPassword,
+    verfied: true,
+  });
+  if (createdPatient) return createdPatient;
 };
 
 userSchema.pre('save', async function (next) {

@@ -2,7 +2,7 @@ const awsS3Service = require('../services/s3Service');
 const uuid = require('uuid');
 const path = require('path');
 const ErrorHandler = require('../utils/ErrorHandler');
-const { constants } = require('../constants');
+const { S3BUCKET_FOLDERS } = require('../constants');
 const catchAsync = require('../utils/catchAsync');
 
 exports.uploadImageFunction = catchAsync(async (req, res, next) => {
@@ -13,7 +13,7 @@ exports.uploadImageFunction = catchAsync(async (req, res, next) => {
   const fileName = path.parse(req.file.originalname).name;
   const fileExt = path.parse(req.file.originalname).ext;
   const fileId = uuid.v4();
-  const bucket = constants.S3BUCKET_FOLDERS.ID_PICTURES;
+  const bucket = S3BUCKET_FOLDERS.ID_PICTURES;
   const mimetype = req.file.mimetype;
 
   const uploadPromises = [
