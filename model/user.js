@@ -92,7 +92,7 @@ userSchema.statics.registerUser = async function (payload) {
 
 userSchema.statics.createPatient = async function (payload) {
   const password = generateRandomString(6);
-  const encryptedPassword = encrypt(password);
+  const encryptedPassword = password;
   if (!payload.name) {
     throw Error('The name is required');
   }

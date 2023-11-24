@@ -2,6 +2,7 @@ const User = require('../model/user');
 
 const catchAsync = require('../utils/catchAsync');
 const ErrorHandler = require('../utils/ErrorHandler');
+const Factory = require('./Factory');
 
 // const { sendEmail } = require('../services/email');
 // const { generateJWT } = require('../utils/generateJWT');
@@ -27,4 +28,23 @@ exports.createPatient = catchAsync(async (req, res, next) => {
       data: newPatient,
     });
   }
+});
+
+exports.getPatients = Factory.getAllByDoctor(User);
+
+exports.sendCredentials = catchAsync(async (req, res, next) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new ErrorHandler('No user Found with this email.'));
+  }
+
+  console.log(user);
+
+  return res.status(201).json({
+    status: 'success',
+    message: 'Patient Created Successfully.',
+    // data: newPatient,
+  });
 });
