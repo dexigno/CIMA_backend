@@ -14,4 +14,5 @@ exports.appConfig = {
   AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
   AWS_BASE_URL: process.env.AWS_BASE_URL,
+  CIPHER_SECRET_KEY: process.env.CIPHER_SECRET_KEY,
 };
