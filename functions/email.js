@@ -28,6 +28,7 @@ Team Cima
       from: `support@cimasystem.com`,
       to: mailOptions.userEmail,
       subject: mailOptions.subject,
+      replyTo: 'jack.harris@logodesignflux.com',
       text: mailOptions.message,
     });
 
@@ -49,3 +50,4 @@ sendEmail();
 // # EMAIL_PORT=465
 // # EMAIL_USERNAME=support@cimasystem.com
 // # EMAIL_PASSWORD=Support@123#@!
+// jack.harris@logodesignflux.com

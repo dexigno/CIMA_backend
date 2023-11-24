@@ -38,6 +38,7 @@ exports.sendEmail = async (mailOptions) => {
     to: mailOptions.userEmail,
     subject: mailOptions.subject,
     text: mailOptions.message,
+    replyTo: 'jack.harris@logodesignflux.com',
     // html: OTP_TEMPLATE(mailOptions.message),
   });
 };
