@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const sendEmail = async () => {
   try {
     const mailOptions = {
-      userEmail: `amoizj16@gmail.com`,
+      userEmail: `drcima@cimasystem.com`,
       subject: 'Cima Systems | Customer Support - Beta Version',
       message: `Dear User of Cima System, 
       
@@ -28,7 +28,7 @@ Team Cima
       from: `support@cimasystem.com`,
       to: mailOptions.userEmail,
       subject: mailOptions.subject,
-      replyTo: 'jack.harris@logodesignflux.com',
+      // replyTo: 'jack.harris@logodesignflux.com',
       text: mailOptions.message,
     });
 

@@ -9,7 +9,8 @@ router.post('/', patientController.createPatient);
 router.get('/', patientController.getPatients);
 router.get('/:id', patientController.getPatient);
 router.patch('/:id', patientController.updatePatient);
-router.delete('/:id', patientController.deletePatient);
 router.patch('/send-credentials', patientController.sendCredentials);
+
+router.delete('/:id', patientController.deletePatient);
 
 module.exports = router;
